@@ -14,3 +14,13 @@ Consigli del giorno:
 * Individuate gli elementi di cui avete bisogno per realizzare il programma.
 * Immaginate la logica come fosse uno snack: "Dati 2 array di numeri, indica quali e quanti numeri ci sono in comune tra i due array" */
 
+// Recupero il bottone dal DOM
+const startButton = document.getElementById('startButton');
+
+// Aggiungo l'event listener per il bottone di avvio
+startButton.addEventListener('click', startGame);
+
+function startGame() {
+    // Qui andrà la logica per avviare il gioco
+};
+
