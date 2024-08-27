@@ -38,14 +38,34 @@ function displayNumbersAndTimer(numbers, timer) {
         <div id="numberDisplay">${numbers.join(' ')}</div>`;
 }
 
+//Creo una funzione per implementare il countdown e per nascondere i numeri alla scadenza
+function startCountdown(timer, numbers) {
+    const countdown = setInterval(() => {
+        timer--;
+        updateTimerDisplay(timer);
+
+        if (timer === 0) {
+            clearInterval(countdown);
+            showInputFields(numbers);
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay(timer) {
+    document.getElementById('timer').innerText = `Tempo rimanente: ${timer} secondi`;
+}
+
 //Creo una funzione per l'avvio del gioco
 function startGame() {
     const numbers = generateRandomNumbers(5);
     let timer = 30;
 
-    //chiamata alla funzione
+    //chiamate alla funzione...
     displayNumbersAndTimer(numbers, timer);
+    startCountdown(timer, numbers);
 };
+
+
 
 
 
