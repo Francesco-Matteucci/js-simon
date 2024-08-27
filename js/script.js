@@ -31,7 +31,7 @@ function startGame() {
     const numbers = generateRandomNumbers(5);
 
     // Imposto il timer a 30 secondi
-    let timer = 3;
+    let timer = 30;
 
     // Mostro il timer e i numeri casuali
     container.innerHTML = `<div id="timer" class="fs-3 fw-bold text-center mb-3">Tempo rimanente: ${timer} secondi</div>
