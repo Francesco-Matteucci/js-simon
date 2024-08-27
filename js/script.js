@@ -20,7 +20,22 @@ const startButton = document.getElementById('startButton');
 // Aggiungo l'event listener per il bottone di avvio
 startButton.addEventListener('click', startGame);
 
+//Creo una funzione per generare 5 numeri casuali
+function generateRandomNumbers(count) {
+    let numbers = [];
+    while (numbers.length < count) {
+        const num = Math.floor(Math.random() * 100) + 1;
+        if (!numbers.includes(num)) {
+            numbers.push(num);
+        }
+    }
+    return numbers;
+}
+
+//Creo una funzione per l'avvio del gioco
 function startGame() {
-    // Qui andrà la logica per avviare il gioco
+    const numbers = generateRandomNumbers(5);
 };
+
+
 
