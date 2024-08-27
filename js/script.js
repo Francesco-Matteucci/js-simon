@@ -16,9 +16,20 @@ Consigli del giorno:
 
 // Recupero il bottone dal DOM
 const startButton = document.getElementById('startButton');
+const container = document.querySelector('.container');
 
 // Aggiungo l'event listener per il bottone di avvio
 startButton.addEventListener('click', startGame);
+
+//Creo una funzione per l'avvio del gioco
+function startGame() {
+    const numbers = generateRandomNumbers(5);
+    let timer = 30;
+
+    //chiamate alla funzione...
+    displayNumbersAndTimer(numbers, timer);
+    startCountdown(timer, numbers);
+};
 
 //Creo una funzione per generare 5 numeri casuali
 function generateRandomNumbers(count) {
@@ -51,7 +62,7 @@ function startCountdown(timer, numbers) {
     }, 1000);
 }
 
-//Creo uha funzione per aggiornare il timer
+//Creo una funzione per aggiornare il timer
 function updateTimerDisplay(timer) {
     document.getElementById('timer').innerText = `Tempo rimanente: ${timer} secondi`;
 }
@@ -65,7 +76,7 @@ function showInputFields(correctNumbers) {
             <input type="number" min="1" max="100" required>
             <input type="number" min="1" max="100" required>
             <input type="number" min="1" max="100" required>
-            <div class="mt-3">
+            <div class="mt-3 text-center">
                 <button type="submit" class="btn btn-success">Verifica</button>
             </div>
         </form>
@@ -79,15 +90,55 @@ function showInputFields(correctNumbers) {
     });
 }
 
-//Creo una funzione per l'avvio del gioco
-function startGame() {
-    const numbers = generateRandomNumbers(5);
-    let timer = 30;
+// Creo una funzione per validare e verificare i numeri inseriti
+function validateAndCheck(correctNumbers) {
+    const inputs = document.querySelectorAll('input[type="number"]');
+    let userNumbers = [];
 
-    //chiamate alla funzione...
-    displayNumbersAndTimer(numbers, timer);
-    startCountdown(timer, numbers);
-};
+    inputs.forEach(input => {
+        userNumbers.push(parseInt(input.value));
+    });
+
+    if (hasDuplicates(userNumbers)) {
+        alert("Hai inserito numeri duplicati!");
+        return;
+    }
+
+    let validNumbers = [];
+    userNumbers.forEach(num => {
+        if (correctNumbers.includes(num)) {
+            validNumbers.push(num);
+        }
+    });
+
+    displayResult(validNumbers);
+}
+
+// Creo una funzione per controllare se ci sono duplicati
+function hasDuplicates(array) {
+    const counts = {};
+
+    for (let i = 0; i < array.length; i++) {
+        const num = array[i];
+        if (counts[num]) {
+
+            // se c'è un duplicato..
+            return true;
+        } else {
+            counts[num] = 1;
+        }
+    }
+
+    //nessun duplicato..
+    return false;
+}
+
+// Funzione per mostrare il risultato
+function displayResult(validNumbers) {
+    document.getElementById('result').innerText = `Hai indovinato ${validNumbers.length} numeri: ${validNumbers.join(', ')}`;
+}
+
+
 
 
 
