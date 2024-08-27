@@ -14,24 +14,50 @@ Consigli del giorno:
 * Individuate gli elementi di cui avete bisogno per realizzare il programma.
 * Immaginate la logica come fosse uno snack: "Dati 2 array di numeri, indica quali e quanti numeri ci sono in comune tra i due array" */
 
-// Recupero il bottone dal DOM
+// Recupero il bottone dal DOM e il contenitore principale
 const startButton = document.getElementById('startButton');
-const container = document.querySelector('.container');
+const container = document.getElementById('gameContent');
+const resultElement = document.getElementById('result');
 
 // Aggiungo l'event listener per il bottone di avvio
 startButton.addEventListener('click', startGame);
 
-//Creo una funzione per l'avvio del gioco
+// Creo una funzione per avviare il gioco
 function startGame() {
+    // Nascondo il bottone "Inizia il Gioco"
+    startButton.classList.add('d-none');
+
+    // Genero 5 numeri casuali
     const numbers = generateRandomNumbers(5);
-    let timer = 30;
 
-    //chiamate alla funzione...
-    displayNumbersAndTimer(numbers, timer);
-    startCountdown(timer, numbers);
-};
+    // Imposto il timer a 30 secondi
+    let timer = 3;
 
-//Creo una funzione per generare 5 numeri casuali
+    // Mostro il timer e i numeri casuali
+    container.innerHTML = `<div id="timer" class="fs-3 fw-bold text-center mb-3">Tempo rimanente: ${timer} secondi</div>
+        <div id="numberDisplay" class="fs-2 text-center mb-4">${numbers.join(' ')}</div>`;
+
+    // Avvio il conto alla rovescia
+    const countdown = setInterval(() => {
+        timer--;
+
+        // Aggiorno il timer solo se esiste nel DOM
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.innerText = `Tempo rimanente: ${timer} secondi`;
+        }
+
+        if (timer === 0) {
+            // ..fermo il countdown
+            clearInterval(countdown);
+
+            // Mostro i campi di input alla scadenza del timer
+            showInputFields(numbers);
+        }
+    }, 1000);
+}
+
+// Creo una funzione per generare 5 numeri casuali
 function generateRandomNumbers(count) {
     let numbers = [];
     while (numbers.length < count) {
@@ -43,51 +69,31 @@ function generateRandomNumbers(count) {
     return numbers;
 }
 
-//Creo la funzione per mostrare il timer e i numeri
-function displayNumbersAndTimer(numbers, timer) {
-    container.innerHTML = `<div id="timer" class="my-3">Tempo rimanente: ${timer} secondi</div>
-        <div id="numberDisplay">${numbers.join(' ')}</div>`;
-}
-
-//Creo una funzione per implementare il countdown e per nascondere i numeri alla scadenza
-function startCountdown(timer, numbers) {
-    const countdown = setInterval(() => {
-        timer--;
-        updateTimerDisplay(timer);
-
-        if (timer === 0) {
-            clearInterval(countdown);
-            showInputFields(numbers);
-        }
-    }, 1000);
-}
-
-//Creo una funzione per aggiornare il timer
-function updateTimerDisplay(timer) {
-    document.getElementById('timer').innerText = `Tempo rimanente: ${timer} secondi`;
-}
-
-// Creo una funzione per mostrare i campi input, cosicchè l'utente possa inserire i numeri
+// Creo una funzione per mostrare i campi degli input
 function showInputFields(correctNumbers) {
-    container.innerHTML = `
-        <form id="guessForm">
-            <input type="number" min="1" max="100" required>
-            <input type="number" min="1" max="100" required>
-            <input type="number" min="1" max="100" required>
-            <input type="number" min="1" max="100" required>
-            <input type="number" min="1" max="100" required>
+    container.innerHTML = `<form id="guessForm" class="p-4 bg-dark d-flex flex-column align-items-center">
+            ${generateInputFields(5)}
             <div class="mt-3 text-center">
-                <button type="submit" class="btn btn-success">Verifica</button>
+                <button type="submit" class="btn btn-success btn-lg">Verifica</button>
             </div>
-        </form>
-        <div id="result" class="mt-3"></div>
-    `;
+        </form>`;
 
     const guessForm = document.getElementById('guessForm');
     guessForm.addEventListener('submit', function (e) {
         e.preventDefault();
+
+        // Valido i numeri inseriti dall'utente
         validateAndCheck(correctNumbers);
     });
+}
+
+// Creo una funzione per generare dinamicamente i campi degli input
+function generateInputFields(count) {
+    let inputs = '';
+    for (let i = 0; i < count; i++) {
+        inputs += `<input type="number" class="form-control text-center mb-3" min="1" max="100" required>`;
+    }
+    return inputs;
 }
 
 // Creo una funzione per validare e verificare i numeri inseriti
@@ -95,53 +101,80 @@ function validateAndCheck(correctNumbers) {
     const inputs = document.querySelectorAll('input[type="number"]');
     let userNumbers = [];
 
-    inputs.forEach(input => {
-        userNumbers.push(parseInt(input.value));
-    });
+    // Creo un ciclo for per iterare attraverso i campi degli input per raccogliere i numeri inseriti dall'utente
+    for (let i = 0; i < inputs.length; i++) {
+        const inputValue = parseInt(inputs[i].value);
 
+        // Aggiungo il valore solo se è un numero valido
+        if (!isNaN(inputValue)) {
+            userNumbers.push(inputValue);
+        }
+    }
+
+    // Controllo se ci sono duplicati
     if (hasDuplicates(userNumbers)) {
-        alert("Hai inserito numeri duplicati!");
+        showMessage("Hai inserito numeri duplicati!", "error");
         return;
     }
 
+    // Trovo i numeri validi confrontando con correctNumbers
     let validNumbers = [];
-    userNumbers.forEach(num => {
-        if (correctNumbers.includes(num)) {
-            validNumbers.push(num);
+    for (let i = 0; i < userNumbers.length; i++) {
+        if (correctNumbers.includes(userNumbers[i])) {
+            validNumbers.push(userNumbers[i]);
         }
-    });
+    }
 
+    // Mostro il risultato
     displayResult(validNumbers);
 }
 
 // Creo una funzione per controllare se ci sono duplicati
 function hasDuplicates(array) {
-    const counts = {};
-
     for (let i = 0; i < array.length; i++) {
-        const num = array[i];
-        if (counts[num]) {
-
-            // se c'è un duplicato..
-            return true;
-        } else {
-            counts[num] = 1;
+        for (let j = i + 1; j < array.length; j++) {
+            if (array[i] === array[j]) {
+                // Se trovo un duplicato..
+                return true;
+            }
         }
     }
 
-    //nessun duplicato..
+    // Se non ci sono duplicati..
     return false;
 }
 
-// Funzione per mostrare il risultato
-function displayResult(validNumbers) {
-    document.getElementById('result').innerText = `Hai indovinato ${validNumbers.length} numeri: ${validNumbers.join(', ')}`;
+// Creo una funzione per mostrare i messaggi all'utente
+function showMessage(message, type) {
+    let messageClass = "";
+    switch (type) {
+        case "error":
+            messageClass = "alert-danger";
+            break;
+        case "success":
+            messageClass = "alert-success";
+            break;
+        default:
+            messageClass = "alert-info";
+    }
+
+    resultElement.className = `alert ${messageClass} mt-4`;
+    resultElement.innerText = message;
+
+    // Rimuovo la classe 'd-none' per mostrare il messaggio
+    resultElement.classList.remove('d-none');
+
+    // Aggiungo la classe 'show' per transizione e visibilità
+    resultElement.classList.add('show');
 }
 
-
-
-
-
-
+// Creo una funzione per mostrare il risultato
+function displayResult(validNumbers) {
+    if (validNumbers.length > 0) {
+        showMessage(`Hai indovinato ${validNumbers.length} numeri: ${validNumbers.join(', ')}`, "success");
+    } else {
+        showMessage("Non hai indovinato nessun numero.", "error");
+    }
+}
 
 
