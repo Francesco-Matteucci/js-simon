@@ -51,8 +51,32 @@ function startCountdown(timer, numbers) {
     }, 1000);
 }
 
+//Creo uha funzione per aggiornare il timer
 function updateTimerDisplay(timer) {
     document.getElementById('timer').innerText = `Tempo rimanente: ${timer} secondi`;
+}
+
+// Creo una funzione per mostrare i campi input, cosicchè l'utente possa inserire i numeri
+function showInputFields(correctNumbers) {
+    container.innerHTML = `
+        <form id="guessForm">
+            <input type="number" min="1" max="100" required>
+            <input type="number" min="1" max="100" required>
+            <input type="number" min="1" max="100" required>
+            <input type="number" min="1" max="100" required>
+            <input type="number" min="1" max="100" required>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">Verifica</button>
+            </div>
+        </form>
+        <div id="result" class="mt-3"></div>
+    `;
+
+    const guessForm = document.getElementById('guessForm');
+    guessForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        validateAndCheck(correctNumbers);
+    });
 }
 
 //Creo una funzione per l'avvio del gioco
@@ -64,6 +88,7 @@ function startGame() {
     displayNumbersAndTimer(numbers, timer);
     startCountdown(timer, numbers);
 };
+
 
 
 
