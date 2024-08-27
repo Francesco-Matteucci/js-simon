@@ -32,9 +32,19 @@ function generateRandomNumbers(count) {
     return numbers;
 }
 
+//Creo la funzione per mostrare il timer e i numeri
+function displayNumbersAndTimer(numbers, timer) {
+    container.innerHTML = `<div id="timer" class="my-3">Tempo rimanente: ${timer} secondi</div>
+        <div id="numberDisplay">${numbers.join(' ')}</div>`;
+}
+
 //Creo una funzione per l'avvio del gioco
 function startGame() {
     const numbers = generateRandomNumbers(5);
+    let timer = 30;
+
+    //chiamata alla funzione
+    displayNumbersAndTimer(numbers, timer);
 };
 
 
